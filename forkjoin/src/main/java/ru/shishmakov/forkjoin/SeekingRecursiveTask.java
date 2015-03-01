@@ -5,7 +5,7 @@ import java.util.function.BinaryOperator;
 import java.util.concurrent.ForkJoinPool;
 
 /**
- * Simple prototype of RecursiveTask class for recursive computation into {@link ForkJoinPool}.
+ * Simple prototype of {@link RecursiveTask RecursiveTask&lt;T&gt;} class for recursive computation into {@link ForkJoinPool}.
  *
  * @author Dmitriy Shishmakov
  * @see RecursiveTask
