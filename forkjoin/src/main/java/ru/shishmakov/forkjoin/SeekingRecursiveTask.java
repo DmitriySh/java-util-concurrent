@@ -2,13 +2,14 @@ package ru.shishmakov.forkjoin;
 
 import java.util.concurrent.RecursiveTask;
 import java.util.function.BinaryOperator;
+import java.util.concurrent.ForkJoinPool;
 
 /**
- * Simple prototype of RecursiveTask class for recursive computation into {@link java.util.concurrent.ForkJoinPool}.
+ * Simple prototype of RecursiveTask class for recursive computation into {@link ForkJoinPool}.
  *
  * @author Dmitriy Shishmakov
- * @see java.util.concurrent.RecursiveTask
- * @see java.util.concurrent.ForkJoinPool
+ * @see RecursiveTask
+ * @see ForkJoinPool
  */
 public class SeekingRecursiveTask extends RecursiveTask<String> {
 

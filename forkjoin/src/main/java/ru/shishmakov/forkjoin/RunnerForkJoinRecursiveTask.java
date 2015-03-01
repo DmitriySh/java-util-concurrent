@@ -8,9 +8,10 @@ import java.util.function.BinaryOperator;
 /**
  * Class runs simple prototype of RecursiveTask for Fork/Join Framework.
  * <p>
- * Exist the range of the sorted numbers [0 .. 1_000_000).
- * Needs to find the specified number and display the range in which it was found.
- * Uses a binary search but a divide. Source code is shows recursive division and expectation of the return value.
+ * There is range of the sorted numbers [0 .. 1_000_000).
+ * Need to find the specified number and display the range in which it was found.
+ * Uses a binary search is divided into between subranges.
+ * Source code shows recursive division and expectation of the return value.
  *
  * @author Dmitriy Shishmakov
  * @see ru.shishmakov.forkjoin.SeekingRecursiveTask
