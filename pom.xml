@@ -11,6 +11,7 @@
 
     <modules>
         <module>executor</module>
+        <module>forkjoin</module>
     </modules>
 
     <build>
