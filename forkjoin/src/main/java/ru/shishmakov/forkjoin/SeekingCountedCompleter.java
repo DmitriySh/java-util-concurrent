@@ -6,7 +6,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 
 /**
- * Simple prototype of {@link CountedCompleter CountedCompleter&lt;T&gt;} class for recursive computation into {@link ForkJoinPool}.
+ * Simple prototype of {@link CountedCompleter CountedCompleter&lt;T&gt;} class
+ * for recursive computation into {@link ForkJoinPool}.
  *
  * @author Dmitriy Shishmakov
  * @see CountedCompleter
@@ -37,6 +38,9 @@ public class SeekingCountedCompleter extends CountedCompleter<String> {
         this.threshold = threshold;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void compute() {
         if (to - from < threshold) {

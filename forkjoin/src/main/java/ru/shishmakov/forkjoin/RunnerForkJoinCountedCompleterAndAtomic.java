@@ -1,25 +1,26 @@
 package ru.shishmakov.forkjoin;
 
 import java.util.Arrays;
+import java.util.concurrent.CountedCompleter;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 
 /**
- * Class runs simple prototype of {@link RecursiveTask RecursiveTask&lt;T&gt;} for Fork/Join Framework.
+ * Class runs simple prototype of {@link CountedCompleter CountedCompleter&lt;T&gt;} for Fork/Join Framework.
  * <p>
  * There is range of the sorted numbers {@code [0 .. 1_000_000)}.
  * Need to find the specified number and display the range in which it was found.
  * Uses a binary search is divided into between subranges.
  * Source code shows recursive division and expectation of the return value.
- * Tasks of {@link RecursiveTask RecursiveTask&lt;T&gt;} need to be joinable
- * (invoke {@link java.util.concurrent.RecursiveTask#join() join} method).
+ * Tasks of {@link CountedCompleter CountedCompleter&lt;T&gt;} not need to be joinable
+ * (invoke {@link CountedCompleter#join() join} method).
  *
  * @author Dmitriy Shishmakov
- * @see SeekingRecursiveTask
+ * @see SeekingCountedCompleterAndAtomic
  * @see ForkJoinPool
  */
-public class RunnerForkJoinRecursiveTask {
+public class RunnerForkJoinCountedCompleterAndAtomic {
     public static void main(String[] args) {
         final int fromInclusive = 0;
         final int toExclusive = 1_000_000;
@@ -35,16 +36,18 @@ public class RunnerForkJoinRecursiveTask {
             return Arrays.binarySearch(array, searchNumber);
         };
 
+        final AtomicReference<String> position = new AtomicReference<>();
         final int cores = Runtime.getRuntime().availableProcessors();
         final int threshold = toExclusive / (cores * 20);
         final int parallelism = cores * 2;
-        final RecursiveTask<String> task = new SeekingRecursiveTask(function,
-                fromInclusive, toExclusive, threshold);
+        final CountedCompleter<Void> task = new SeekingCountedCompleterAndAtomic(
+                function, position, fromInclusive, toExclusive, threshold);
         final ForkJoinPool pool = new ForkJoinPool(parallelism);
         // synchronous call task
-        final String position = pool.invoke(task);
+        pool.invoke(task);
         System.out.printf("position of number %d into: %s%n", searchNumber,
-                position);
+                position.get());
     }
+
 
 }

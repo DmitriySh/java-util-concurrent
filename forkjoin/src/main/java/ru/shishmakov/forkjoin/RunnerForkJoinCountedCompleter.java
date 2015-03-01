@@ -25,8 +25,6 @@ public class RunnerForkJoinCountedCompleter {
         final int toExclusive = 1_000_000;
         final int searchNumber = 499_100;
 
-        final int cores = Runtime.getRuntime().availableProcessors();
-        final int threshold = toExclusive / (cores * 20);
         // function for perform the action
         final BinaryOperator<Integer> function = (left, right) -> {
             final int[] array = new int[right - left];
@@ -37,9 +35,11 @@ public class RunnerForkJoinCountedCompleter {
             return Arrays.binarySearch(array, searchNumber);
         };
 
+        final int cores = Runtime.getRuntime().availableProcessors();
+        final int threshold = toExclusive / (cores * 20);
+        final int parallelism = cores * 2;
         final CountedCompleter<String> task = new SeekingCountedCompleter(function, fromInclusive,
                 toExclusive, threshold);
-        final int parallelism = Runtime.getRuntime().availableProcessors() * 2;
         final ForkJoinPool pool = new ForkJoinPool(parallelism);
         // synchronous call task
         final String position = pool.invoke(task);
