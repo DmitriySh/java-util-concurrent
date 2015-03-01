@@ -9,6 +9,10 @@
 
     <name>java-util-concurrent</name>
 
+    <modules>
+        <module>executor</module>
+    </modules>
+
     <build>
         <pluginManagement>
             <plugins>
