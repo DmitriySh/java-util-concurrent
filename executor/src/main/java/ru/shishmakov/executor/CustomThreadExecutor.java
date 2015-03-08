@@ -6,7 +6,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Simple prototype of executor service with thread pool
+ * Simple prototype of executor service with thread pool.
+ * Blocks the execution of tasks if there are more than 256.
  *
  * @author Dmitriy Shishmakov
  * @see java.util.concurrent.Executor
@@ -24,6 +25,9 @@ public class CustomThreadExecutor implements Executor {
     }
 
     public CustomThreadExecutor(final int threadsCount) {
+        // default handler for uncaught exceptions
+        Thread.setDefaultUncaughtExceptionHandler((t, e) ->
+                System.out.printf("Thread %s threw an exception: %s%n", t.getName(), e));
         this.pool = new WorkerThread[threadsCount];
         for (int i = 0; i < pool.length; i++) {
             // initialization of thread
@@ -33,9 +37,10 @@ public class CustomThreadExecutor implements Executor {
     }
 
     /**
-     * {@inheritDoc}
+     * Executes the given task at some time in the future.
+     * The task executes in a new thread from the thread pool.
      *
-     * @param task the runnable task
+     * @param task the runnable command
      */
     @Override
     public void execute(final Runnable task) {
@@ -88,7 +93,7 @@ public class CustomThreadExecutor implements Executor {
             do {
                 terminated = true;
                 for (WorkerThread thread : pool) {
-                    if (!thread.isCancel()) {
+                    if (thread.isAlive()) {
                         terminated = false;
                         break;
                     }
@@ -105,16 +110,10 @@ public class CustomThreadExecutor implements Executor {
      */
     private static class WorkerThread extends Thread {
         private final BlockingQueue<Runnable> taskQueue;
-        private volatile boolean cancel;
 
         private WorkerThread(String name, final BlockingQueue<Runnable> taskQueue) {
             super(name);
             this.taskQueue = taskQueue;
-            this.cancel = false;
-        }
-
-        public boolean isCancel() {
-            return cancel;
         }
 
         @Override
@@ -128,11 +127,10 @@ public class CustomThreadExecutor implements Executor {
                     final Runnable task = taskQueue.take();
                     task.run();
                 } catch (InterruptedException e) {
-                    this.cancel = true;
                     break;
                 }
             }
-            System.out.println("Thread " + getName() + " leaves the run() method");
+            System.out.printf("Thread %s leaves the run() method%n", getName());
         }
     }
 
